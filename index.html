@@ -4,555 +4,723 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Bharanitharan | Salesforce Developer</title>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"/>
   <style>
-    /* ── TOKENS ── */
     :root {
-      --bg:         #07070f;
-      --surface:    #0d0d1c;
-      --violet:     #7B5EF8;
-      --violet-mid: #9B7CFF;
-      --violet-lt:  #C4B0FF;
-      --white:      #f0eeff;
-      --muted:      rgba(240,238,255,0.42);
-      --border:     rgba(123,94,248,0.16);
+      --bg:        #111318;
+      --bg2:       #0d0f13;
+      --surface:   #181b22;
+      --surface2:  #1e2029;
+      --blue:      #2563EB;
+      --blue-lt:   #3b82f6;
+      --blue-dim:  rgba(37,99,235,0.15);
+      --white:     #f4f4f5;
+      --off:       #a1a1aa;
+      --muted:     #6b7280;
+      --border:    rgba(255,255,255,0.07);
+      --border2:   rgba(255,255,255,0.12);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
-
     body {
       background: var(--bg);
       color: var(--white);
-      font-family: 'DM Sans', sans-serif;
+      font-family: 'Manrope', sans-serif;
       overflow-x: hidden;
     }
 
-    /* noise grain */
-    body::after {
-      content: '';
-      position: fixed; inset: 0; pointer-events: none; z-index: 999;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
-      opacity: .32;
-    }
-
-    /* ══════════════ NAV ══════════════ */
+    /* ── NAVBAR ── */
     .navbar {
       position: fixed; top: 0; left: 0; right: 0; z-index: 200;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 26px 52px;
-      background: linear-gradient(to bottom, rgba(7,7,15,.92) 0%, transparent 100%);
+      padding: 18px 48px;
+      background: rgba(17,19,24,0.88);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
     }
-    .nav-logo {
-      font-family: 'Syne', sans-serif; font-weight: 800;
-      font-size: 1.15rem; letter-spacing: .04em;
-      color: var(--white); text-decoration: none;
+    .nav-brand {
+      display: flex; align-items: center; gap: 8px;
+      text-decoration: none; color: var(--white);
+      font-weight: 700; font-size: .95rem; letter-spacing: .01em;
     }
-    .nav-links { display: flex; gap: 44px; list-style: none; }
+    .nav-brand-icon {
+      color: var(--blue); font-size: 1rem; font-weight: 800;
+      font-family: 'Manrope', monospace;
+    }
+    .nav-links {
+      display: flex; align-items: center; gap: 6px; list-style: none;
+    }
     .nav-links a {
-      color: var(--muted); text-decoration: none;
-      font-size: .86rem; font-weight: 400; letter-spacing: .04em;
-      transition: color .2s; position: relative;
+      color: var(--off); text-decoration: none;
+      font-size: .84rem; font-weight: 500; letter-spacing: .02em;
+      padding: 6px 14px; border-radius: 6px;
+      transition: color .18s, background .18s;
     }
-    .nav-links a::after {
-      content: ''; position: absolute; bottom: -4px; left: 0; right: 100%;
-      height: 1px; background: var(--violet); transition: right .28s ease;
+    .nav-links a:hover { color: var(--white); background: rgba(255,255,255,.05); }
+    .nav-menu {
+      width: 32px; height: 22px;
+      display: flex; flex-direction: column; justify-content: space-between;
+      cursor: pointer; padding: 2px 0;
     }
-    .nav-links a:hover { color: var(--white); }
-    .nav-links a:hover::after { right: 0; }
+    .nav-menu span {
+      display: block; height: 1.5px; background: var(--off); border-radius: 2px;
+      transition: background .2s;
+    }
+    .nav-menu span:last-child { width: 60%; }
+    .nav-menu:hover span { background: var(--white); }
 
-    /* ══════════════ HERO ══════════════ */
+    /* ── HERO ── */
     .hero {
       min-height: 100vh;
       display: grid;
-      grid-template-columns: 1fr auto 1fr;
-      grid-template-rows: 1fr;
-      align-items: center;
+      grid-template-columns: 1fr 1fr;
       position: relative; overflow: hidden;
+      padding-top: 66px;
     }
 
-    /* big centre violet glow */
-    .hero-glow {
-      position: absolute; bottom: -60px; left: 50%;
-      transform: translateX(-50%);
-      width: 520px; height: 520px;
-      background: radial-gradient(ellipse at bottom, rgba(123,94,248,.55) 0%, transparent 68%);
-      pointer-events: none; z-index: 1;
-      animation: breathe 4s ease-in-out infinite;
-    }
-    @keyframes breathe {
-      0%,100% { opacity: .85; transform: translateX(-50%) scale(1); }
-      50%      { opacity: 1;   transform: translateX(-50%) scale(1.07); }
-    }
-
-    /* top-left corner glow */
-    .hero-corner {
-      position: absolute; top: -80px; left: -80px;
-      width: 340px; height: 340px;
-      background: radial-gradient(circle, rgba(123,94,248,.18) 0%, transparent 70%);
-      pointer-events: none; z-index: 0;
-    }
-
-    /* ── LEFT ── */
+    /* LEFT panel */
     .hero-left {
-      padding-left: 52px; z-index: 5;
-      animation: fadeUp .9s ease both;
-    }
-    .hello-label {
-      font-size: 1rem; font-weight: 300; font-style: italic;
-      color: var(--violet-mid); letter-spacing: .02em; margin-bottom: 8px;
-    }
-    .hero-name {
-      font-family: 'Syne', sans-serif; font-weight: 800;
-      font-size: clamp(3rem, 4.8vw, 5.2rem);
-      line-height: .98; letter-spacing: -.02em; color: var(--white);
+      position: relative;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 0 48px 64px;
+      background: var(--bg2);
+      overflow: hidden;
     }
 
-    /* ── CENTER photo ── */
-    .hero-center {
-      position: relative; z-index: 4;
-      display: flex; align-items: flex-end; justify-content: center;
-      height: 100vh; width: 340px;
-      animation: fadeIn 1s ease both .15s;
+    /* photo fills left panel */
+    .hero-photo-wrap {
+      position: absolute; inset: 0;
+      display: flex; align-items: flex-end;
     }
-    .hero-photo {
-      width: 300px; position: relative; z-index: 2;
-      /* placeholder silhouette */
-      height: 460px;
-      background: linear-gradient(170deg,#1e1a36 0%,#13102a 55%,#070710 100%);
-      border-radius: 50% 50% 0 0 / 55% 55% 0 0;
-      overflow: hidden;
-      display: flex; align-items: flex-end; justify-content: center;
-    }
-    .hero-photo img {
-      width: 100%; height: 100%; object-fit: cover; object-position: top;
+    .hero-photo-wrap img,
+    .hero-photo-placeholder {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: top center;
       display: block;
     }
-    /* fade bottom */
-    .hero-photo::after {
-      content: ''; position: absolute; bottom: 0; left: 0; right: 0;
-      height: 120px;
-      background: linear-gradient(to top, var(--bg), transparent);
-      z-index: 3;
-    }
-    /* initials placeholder */
-    .avatar-init {
-      font-family: 'Syne', sans-serif; font-weight: 800;
-      font-size: 6rem; color: rgba(123,94,248,.25);
-      letter-spacing: .05em; padding-bottom: 40px; z-index: 2;
-    }
-
-    /* ── RIGHT ── */
-    .hero-right {
-      padding-right: 52px; text-align: right; z-index: 5;
-      animation: fadeUp .9s ease both .12s;
-    }
-    .sf-label {
-      font-size: 1rem; font-weight: 300; font-style: italic;
-      color: var(--violet-mid); letter-spacing: .02em; margin-bottom: 8px;
-    }
-    .hero-title {
-      font-family: 'Syne', sans-serif; font-weight: 800;
-      font-size: clamp(2.4rem, 3.8vw, 4.2rem);
-      line-height: 1.04; letter-spacing: -.02em;
-    }
-    .title-violet { color: var(--violet); }
-    .title-white  { color: var(--white); }
-
-    /* ── SIDE SOCIALS ── */
-    .hero-socials {
-      position: absolute; left: 52px; bottom: 52px;
-      display: flex; flex-direction: column; gap: 22px; z-index: 10;
-    }
-    .hero-socials a {
-      color: var(--muted); display: flex;
-      transition: color .2s, transform .2s;
-    }
-    .hero-socials a:hover { color: var(--violet-lt); transform: scale(1.18); }
-
-    /* ── RESUME CTA ── */
-    .resume-btn {
-      position: absolute; right: 52px; bottom: 52px; z-index: 10;
-      display: flex; align-items: center; gap: 10px;
-      color: var(--muted); text-decoration: none;
-      font-size: .72rem; letter-spacing: .18em; text-transform: uppercase;
-      font-weight: 500; transition: color .2s;
-    }
-    .resume-btn:hover { color: var(--white); }
-    .resume-icon {
-      width: 28px; height: 28px;
-      border: 1px solid var(--border); border-radius: 6px;
+    .hero-photo-placeholder {
+      background: linear-gradient(170deg, #1c2030 0%, #111318 100%);
       display: flex; align-items: center; justify-content: center;
-      font-size: .85rem; transition: border-color .2s, background .2s;
     }
-    .resume-btn:hover .resume-icon {
-      border-color: var(--violet); background: rgba(123,94,248,.12);
+    .hero-photo-placeholder span {
+      font-family: 'Instrument Serif', serif;
+      font-size: 8rem; color: rgba(37,99,235,.18);
+    }
+    /* gradient fade bottom */
+    .hero-photo-wrap::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+      height: 60%; pointer-events: none;
+      background: linear-gradient(to top, var(--bg2) 0%, rgba(13,15,19,.8) 40%, transparent 100%);
     }
 
-    /* ══════════════ SHARED SECTION ══════════════ */
-    section.wrap {
-      padding: 100px 52px;
-      border-top: 1px solid var(--border);
+    .hero-text-over {
       position: relative; z-index: 2;
     }
-    .sec-label {
-      font-size: .7rem; letter-spacing: .22em; text-transform: uppercase;
-      color: var(--violet-mid); margin-bottom: 18px;
-      display: flex; align-items: center; gap: 12px;
+    .hero-rule {
+      width: 48px; height: 2px; background: var(--white);
+      margin-bottom: 22px;
     }
-    .sec-label::before { content: ''; width: 28px; height: 1px; background: var(--violet); }
-    .sec-heading {
-      font-family: 'Syne', sans-serif; font-weight: 800;
-      font-size: clamp(2rem, 3.2vw, 3rem);
-      letter-spacing: -.02em; line-height: 1.08; margin-bottom: 24px;
+    .hero-h1 {
+      font-size: clamp(2rem, 3.5vw, 3.2rem);
+      font-weight: 800; line-height: 1.1;
+      letter-spacing: -.03em; margin-bottom: 18px;
     }
-    .sec-heading em { color: var(--violet); font-style: normal; }
+    .hero-h1 em { font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400; }
+    .hero-sub {
+      color: var(--off); font-size: .9rem; line-height: 1.7;
+      max-width: 340px; margin-bottom: 32px;
+    }
+    .hero-down-btn {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: var(--blue);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; border: none;
+      box-shadow: 0 0 24px rgba(37,99,235,.45);
+      transition: transform .2s, box-shadow .2s;
+      text-decoration: none; color: #fff;
+    }
+    .hero-down-btn:hover { transform: scale(1.08); box-shadow: 0 0 36px rgba(37,99,235,.6); }
+    .hero-down-btn svg { animation: bob 2s ease-in-out infinite; }
+    @keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(3px)} }
 
-    /* ══════════════ ABOUT ══════════════ */
-    .about-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+    /* RIGHT panel */
+    .hero-right {
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 80px 52px 64px 52px;
+      border-left: 1px solid var(--border);
+      gap: 48px;
+    }
+    .hero-block { }
+    .hero-block-label {
+      font-size: .68rem; font-weight: 700; letter-spacing: .18em;
+      text-transform: uppercase; color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .hero-block-body {
+      font-size: .9rem; color: var(--off); line-height: 1.75;
+      margin-bottom: 14px; max-width: 300px;
+    }
+    .hero-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: .78rem; font-weight: 700; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--white);
+      text-decoration: none;
+      border-bottom: 1px solid var(--border2);
+      padding-bottom: 2px;
+      transition: color .2s, border-color .2s;
+    }
+    .hero-link:hover { color: var(--blue-lt); border-color: var(--blue-lt); }
+    .hero-link svg { transition: transform .2s; }
+    .hero-link:hover svg { transform: translateX(3px); }
+
+    .hero-divider { height: 1px; background: var(--border); }
+
+    .hero-follow { }
+    .hero-follow-icons {
+      display: flex; gap: 14px; margin-top: 14px; flex-wrap: wrap;
+    }
+    .hero-follow-icons a {
+      color: var(--muted); transition: color .2s;
+      display: flex; align-items: center;
+    }
+    .hero-follow-icons a:hover { color: var(--white); }
+
+    /* ── STATS STRIP ── */
+    .stats-strip {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .stat-cell {
+      padding: 36px 40px;
+      border-right: 1px solid var(--border);
+      position: relative;
+    }
+    .stat-cell:last-child { border-right: none; }
+    .stat-pre {
+      font-size: .68rem; font-weight: 700; letter-spacing: .15em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
+    }
+    .stat-num {
+      font-size: 2.8rem; font-weight: 800;
+      letter-spacing: -.04em; line-height: 1;
+      color: var(--white); margin-bottom: 4px;
+    }
+    .stat-num sup { font-size: 1.2rem; color: var(--blue); vertical-align: super; }
+    .stat-desc { font-size: .82rem; color: var(--muted); line-height: 1.5; }
+
+    /* ── ABOUT ── */
+    .about {
+      display: grid; grid-template-columns: 1fr 1fr;
+      border-bottom: 1px solid var(--border);
+    }
+    .about-left {
+      padding: 80px 52px;
+      border-right: 1px solid var(--border);
+    }
+    .about-right {
+      padding: 80px 52px;
+      background: var(--surface);
+    }
+
+    .section-eyebrow {
+      display: flex; align-items: center; gap: 10px;
+      font-size: .68rem; font-weight: 700; letter-spacing: .15em;
+      text-transform: uppercase; color: var(--blue);
+      margin-bottom: 22px;
+    }
+    .section-eyebrow::before { content: '/'; color: var(--blue); font-size: .8rem; }
+
+    .about-heading {
+      font-size: clamp(1.6rem, 2.5vw, 2.4rem);
+      font-weight: 800; line-height: 1.15;
+      letter-spacing: -.03em; margin-bottom: 22px;
+    }
+    .about-heading em {
+      font-family: 'Instrument Serif', serif;
+      font-style: italic; font-weight: 400;
     }
     .about-body {
-      color: var(--muted); font-size: .97rem; line-height: 1.8; margin-bottom: 36px;
+      color: var(--off); font-size: .92rem; line-height: 1.8; margin-bottom: 32px;
     }
-    .about-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
-    .stat { border-top: 1px solid var(--border); padding-top: 18px; }
-    .stat-n {
-      font-family: 'Syne', sans-serif; font-weight: 800;
-      font-size: 2.4rem; line-height: 1; color: var(--white); margin-bottom: 4px;
+    .more-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: .82rem; font-weight: 700; letter-spacing: .06em;
+      color: var(--white); text-decoration: none;
+      border-bottom: 1px solid var(--border2); padding-bottom: 3px;
+      transition: color .2s, border-color .2s;
     }
-    .stat-n span { color: var(--violet); }
-    .stat-l { font-size: .78rem; color: var(--muted); }
+    .more-link:hover { color: var(--blue-lt); border-color: var(--blue-lt); }
 
     /* skills */
-    .skills { display: flex; flex-direction: column; gap: 18px; }
-    .skill-row { display: flex; flex-direction: column; gap: 7px; }
-    .skill-meta { display: flex; justify-content: space-between; font-size: .84rem; }
-    .skill-name { color: var(--white); font-weight: 500; }
-    .skill-pct  { color: var(--violet-mid); }
+    .skills-list { display: flex; flex-direction: column; gap: 20px; }
+    .skill-item { }
+    .skill-top {
+      display: flex; justify-content: space-between; align-items: baseline;
+      margin-bottom: 8px;
+    }
+    .skill-name { font-size: .88rem; font-weight: 600; }
+    .skill-pct  { font-size: .78rem; color: var(--blue-lt); font-weight: 700; }
     .skill-track {
-      height: 2px; background: rgba(123,94,248,.1); border-radius: 2px; overflow: hidden;
+      height: 2px; background: var(--border2); border-radius: 2px; overflow: hidden;
     }
     .skill-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--violet), var(--violet-lt));
-      border-radius: 2px; width: 0;
-      transition: width 1.3s cubic-bezier(.4,0,.2,1);
+      height: 100%; width: 0;
+      background: linear-gradient(90deg, var(--blue), var(--blue-lt));
+      border-radius: 2px;
+      transition: width 1.2s cubic-bezier(.4,0,.2,1);
     }
 
-    /* ══════════════ CERTIFICATIONS ══════════════ */
-    .certs-header { margin-bottom: 56px; }
+    /* ── CERTIFICATIONS ── */
+    .certs-section {
+      padding: 80px 52px;
+      border-bottom: 1px solid var(--border);
+    }
+    .certs-top {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      margin-bottom: 52px;
+    }
+    .certs-heading {
+      font-size: clamp(1.6rem, 2.5vw, 2.4rem);
+      font-weight: 800; letter-spacing: -.03em; line-height: 1.1;
+    }
+    .certs-heading em {
+      font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400;
+    }
+    .cert-count {
+      font-size: .82rem; color: var(--muted); font-weight: 500;
+    }
+
     .certs-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap: 24px;
-      max-width: 800px;
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border); border-radius: 14px; overflow: hidden;
     }
     .cert-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 18px; overflow: hidden;
-      transition: transform .3s ease, border-color .3s, box-shadow .3s;
+      background: var(--surface);
+      padding: 0;
+      transition: background .25s;
+      display: flex; flex-direction: column;
     }
-    .cert-card:hover {
-      transform: translateY(-7px);
-      border-color: rgba(123,94,248,.45);
-      box-shadow: 0 16px 48px rgba(123,94,248,.13);
-    }
-    .cert-img {
-      background: #000; padding: 20px;
+    .cert-card:hover { background: var(--surface2); }
+
+    .cert-img-wrap {
+      background: var(--bg2);
       border-bottom: 1px solid var(--border);
-      height: 180px; display: flex; align-items: center; justify-content: center;
-    }
-    .cert-img img { max-width: 100%; max-height: 140px; object-fit: contain; }
-    .cert-placeholder {
-      width: 72px; height: 72px; border-radius: 50%;
-      background: rgba(123,94,248,.1);
+      height: 200px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 1.8rem;
+      padding: 24px; overflow: hidden;
     }
-    .cert-body { padding: 22px; }
-    .cert-body h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; line-height: 1.35; }
-    .cert-body p  { color: var(--muted); font-size: .85rem; line-height: 1.7; }
-    .cert-tag {
-      display: inline-flex; align-items: center; gap: 5px;
-      margin-top: 14px;
-      background: rgba(123,94,248,.1); border: 1px solid rgba(123,94,248,.22);
-      color: var(--violet-mid); font-size: .68rem; letter-spacing: .1em;
-      text-transform: uppercase; font-weight: 600;
-      padding: 3px 10px; border-radius: 4px;
+    .cert-img-wrap img {
+      max-width: 100%; max-height: 152px; object-fit: contain;
     }
+    .cert-img-placeholder {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: var(--blue-dim);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem;
+    }
+    .cert-info { padding: 28px; flex: 1; display: flex; flex-direction: column; }
+    .cert-num {
+      font-size: .68rem; font-weight: 700; letter-spacing: .15em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 10px;
+    }
+    .cert-title { font-size: 1.05rem; font-weight: 700; line-height: 1.3; margin-bottom: 10px; }
+    .cert-desc { color: var(--off); font-size: .85rem; line-height: 1.7; flex: 1; }
+    .cert-badge {
+      display: inline-flex; align-items: center; gap: 6px; margin-top: 18px;
+      background: var(--blue-dim); border: 1px solid rgba(37,99,235,.3);
+      color: var(--blue-lt); font-size: .68rem; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase;
+      padding: 4px 12px; border-radius: 4px; width: fit-content;
+    }
+    .cert-badge::before { content: '●'; font-size: .5rem; }
 
-    /* ══════════════ CONTACT ══════════════ */
-    .contact-wrap { max-width: 700px; }
-    .contact-body { color: var(--muted); font-size: .97rem; line-height: 1.8; margin-bottom: 36px; }
-    .contact-links { display: flex; gap: 14px; flex-wrap: wrap; }
-    .c-link {
-      display: flex; align-items: center; gap: 10px;
-      padding: 13px 22px; border: 1px solid var(--border); border-radius: 10px;
-      text-decoration: none; color: var(--white);
-      font-size: .86rem; font-weight: 500;
-      transition: border-color .2s, background .2s, transform .2s;
+    /* ── CONTACT ── */
+    .contact-section {
+      display: grid; grid-template-columns: 1fr 1fr;
+      border-bottom: 1px solid var(--border);
     }
-    .c-link:hover {
-      border-color: rgba(123,94,248,.5);
-      background: rgba(123,94,248,.08);
-      transform: translateY(-3px);
+    .contact-left {
+      padding: 80px 52px;
+      border-right: 1px solid var(--border);
     }
+    .contact-right {
+      padding: 80px 52px;
+      background: var(--surface);
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .contact-heading {
+      font-size: clamp(1.8rem, 3vw, 3rem);
+      font-weight: 800; letter-spacing: -.03em; line-height: 1.1;
+      margin-bottom: 20px;
+    }
+    .contact-heading em {
+      font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400;
+    }
+    .contact-body {
+      color: var(--off); font-size: .92rem; line-height: 1.8; margin-bottom: 36px;
+    }
+    .contact-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--blue); color: #fff;
+      text-decoration: none; font-weight: 700; font-size: .85rem;
+      letter-spacing: .06em; text-transform: uppercase;
+      padding: 14px 28px; border-radius: 8px;
+      box-shadow: 0 0 28px rgba(37,99,235,.35);
+      transition: transform .2s, box-shadow .2s; width: fit-content;
+    }
+    .contact-btn:hover { transform: translateY(-2px); box-shadow: 0 0 42px rgba(37,99,235,.5); }
 
-    /* ══════════════ FOOTER ══════════════ */
+    .contact-details { display: flex; flex-direction: column; gap: 20px; }
+    .contact-detail-row {
+      display: flex; flex-direction: column; gap: 4px;
+      padding-bottom: 20px; border-bottom: 1px solid var(--border);
+    }
+    .contact-detail-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .cd-label {
+      font-size: .68rem; font-weight: 700; letter-spacing: .14em;
+      text-transform: uppercase; color: var(--muted);
+    }
+    .cd-value { font-size: .95rem; font-weight: 600; color: var(--white); }
+    .cd-value a { color: inherit; text-decoration: none; transition: color .2s; }
+    .cd-value a:hover { color: var(--blue-lt); }
+
+    /* ── FOOTER ── */
     footer {
-      border-top: 1px solid var(--border);
-      padding: 30px 52px;
+      background: var(--bg2);
+      padding: 28px 52px;
       display: flex; justify-content: space-between; align-items: center;
-      color: var(--muted); font-size: .8rem; position: relative; z-index: 2;
+      border-top: 1px solid var(--border);
     }
-    footer span { color: var(--violet); }
-    .footer-links { display: flex; gap: 24px; }
-    .footer-links a { color: var(--muted); text-decoration: none; transition: color .2s; }
-    .footer-links a:hover { color: var(--violet-lt); }
+    .footer-brand {
+      display: flex; align-items: center; gap: 8px;
+      color: var(--white); font-weight: 700; font-size: .9rem;
+      text-decoration: none;
+    }
+    .footer-copy { color: var(--muted); font-size: .78rem; }
+    .footer-links { display: flex; gap: 22px; }
+    .footer-links a {
+      color: var(--muted); text-decoration: none; font-size: .8rem;
+      transition: color .2s;
+    }
+    .footer-links a:hover { color: var(--white); }
 
-    /* ══════════════ ANIMATIONS ══════════════ */
-    @keyframes fadeUp  { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:none; } }
-    @keyframes fadeIn  { from { opacity:0; } to { opacity:1; } }
-
-    .reveal       { opacity:0; transform:translateY(28px); transition:opacity .8s ease,transform .8s ease; }
-    .reveal-left  { opacity:0; transform:translateX(-36px); transition:opacity .8s ease,transform .8s ease; }
-    .reveal-right { opacity:0; transform:translateX(36px);  transition:opacity .8s ease,transform .8s ease; }
+    /* ── REVEALS ── */
+    .reveal       { opacity:0; transform:translateY(28px); transition:opacity .75s ease,transform .75s ease; }
+    .reveal-left  { opacity:0; transform:translateX(-28px); transition:opacity .75s ease,transform .75s ease; }
+    .reveal-right { opacity:0; transform:translateX(28px);  transition:opacity .75s ease,transform .75s ease; }
     .reveal.show, .reveal-left.show, .reveal-right.show { opacity:1; transform:none; }
 
-    /* ══════════════ MOBILE ══════════════ */
-    @media (max-width: 900px) {
-      .navbar { padding: 20px 24px; }
-      .nav-links { gap: 22px; }
+    /* ── MOBILE ── */
+    @media (max-width: 860px) {
+      .navbar { padding: 16px 20px; }
+      .nav-links { display: none; }
 
-      .hero {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto;
-        align-items: flex-start;
-        padding-top: 100px;
-        min-height: auto;
-        text-align: center;
-      }
-      .hero-left  { padding: 48px 24px 0; grid-column: 1; grid-row: 2; }
-      .hero-center { width: 100%; height: auto; grid-column: 1; grid-row: 1; }
-      .hero-right { padding: 0 24px 48px; text-align: center; grid-column: 1; grid-row: 3; }
-      .hero-photo { width: 220px; height: 320px; margin: 0 auto; }
-      .hero-glow  { width: 300px; height: 300px; }
-      .hero-socials { left: 24px; bottom: auto; top: 50%; flex-direction: row; gap: 16px; transform: translateY(-50%); display: none; }
-      .resume-btn { right: 24px; bottom: 24px; }
+      .hero { grid-template-columns: 1fr; min-height: auto; }
+      .hero-left { min-height: 70vw; padding: 0 24px 40px; }
+      .hero-right { padding: 40px 24px; border-left: none; border-top: 1px solid var(--border); }
+      .hero-block-body { max-width: 100%; }
 
-      section.wrap { padding: 64px 24px; }
-      .about-grid { grid-template-columns: 1fr; gap: 48px; }
-      .about-stats { grid-template-columns: repeat(3,1fr); }
+      .stats-strip { grid-template-columns: 1fr 1fr; }
+      .stat-cell { padding: 24px 20px; }
+      .stat-cell:nth-child(2) { border-right: none; }
+      .stat-cell:nth-child(3) { border-top: 1px solid var(--border); }
+      .stat-cell:nth-child(4) { border-top: 1px solid var(--border); border-right: none; }
+
+      .about, .contact-section { grid-template-columns: 1fr; }
+      .about-left, .about-right, .contact-left, .contact-right { padding: 48px 24px; border: none; border-top: 1px solid var(--border); }
+
+      .certs-section { padding: 48px 24px; }
+      .certs-grid { grid-template-columns: 1fr; }
+
       footer { flex-direction: column; gap: 12px; text-align: center; padding: 24px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- ── NAVBAR ── -->
+  <!-- NAVBAR -->
   <header class="navbar">
-    <a href="#home" class="nav-logo">Bharani</a>
+    <a href="#home" class="nav-brand">
+      <span class="nav-brand-icon">&lt;/&gt;</span>
+      Bharanitharan
+    </a>
     <ul class="nav-links">
+      <li><a href="#home">Home</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="#certifications">Certifications</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
+    <div class="nav-menu" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </div>
   </header>
 
-  <!-- ── HERO ── -->
+  <!-- HERO -->
   <section class="hero" id="home">
-    <div class="hero-corner"></div>
-    <div class="hero-glow"></div>
 
-    <!-- LEFT: name -->
+    <!-- LEFT: photo + overlaid text -->
     <div class="hero-left">
-      <p class="hello-label">Hello, I'm</p>
-      <h1 class="hero-name">Bharani<br>tharan</h1>
-    </div>
-
-    <!-- CENTER: photo -->
-    <div class="hero-center">
-      <div class="hero-photo">
+      <div class="hero-photo-wrap">
         <img src="me.png" alt="Bharanitharan">
       </div>
+      <div class="hero-text-over">
+        <div class="hero-rule"></div>
+        <h1 class="hero-h1">I'm Bharani,<br>a <em>Salesforce</em><br>Developer</h1>
+        <p class="hero-sub">Building scalable, automated, and secure Salesforce solutions using Apex, LWC, Flows, and Triggers.</p>
+        <a href="#about" class="hero-down-btn" aria-label="Scroll down">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+        </a>
+      </div>
     </div>
 
-    <!-- RIGHT: role -->
+    <!-- RIGHT: blocks -->
     <div class="hero-right">
-      <p class="sf-label">Salesforce</p>
-      <h2 class="hero-title">
-        <span class="title-violet">Developer</span><br>
-        <span class="title-white">&amp; Builder</span>
-      </h2>
+      <div class="hero-block">
+        <div class="hero-block-label">About Me</div>
+        <p class="hero-block-body">Salesforce-certified developer with hands-on experience in Apex, Lightning Web Components, declarative automation, and AI-powered Agentforce solutions.</p>
+        <a href="#about" class="hero-link">
+          Learn more
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="hero-divider"></div>
+
+      <div class="hero-block">
+        <div class="hero-block-label">My Certifications</div>
+        <p class="hero-block-body">Salesforce Certified Platform Administrator and Agentforce Specialist — with more on the Trailhead roadmap.</p>
+        <a href="#certifications" class="hero-link">
+          Browse certifications
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="hero-divider"></div>
+
+      <div class="hero-follow">
+        <div class="hero-block-label">Follow Me</div>
+        <div class="hero-follow-icons">
+          <a href="#" title="LinkedIn">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="4"/><path d="M7 10v7M7 7v.01M12 10v7m0-5a3 3 0 016 0v5"/></svg>
+          </a>
+          <a href="#" title="Twitter">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/></svg>
+          </a>
+          <a href="#" title="Instagram">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".5" fill="currentColor"/></svg>
+          </a>
+          <a href="#" title="GitHub">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+          </a>
+          <a href="#" title="Trailhead">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          </a>
+        </div>
+      </div>
     </div>
-
-    <!-- Side socials -->
-    <nav class="hero-socials">
-      <a href="#" title="LinkedIn">
-        <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="4"/><path d="M7 10v7M7 7v.01M12 10v7m0-5a3 3 0 016 0v5"/></svg>
-      </a>
-      <a href="#" title="GitHub">
-        <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
-      </a>
-      <a href="#" title="Instagram">
-        <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".5" fill="currentColor"/></svg>
-      </a>
-      <a href="#" title="Trailhead">
-        <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-      </a>
-    </nav>
-
-    <!-- Resume -->
-    <a href="#" class="resume-btn">
-      Resume
-      <div class="resume-icon">↗</div>
-    </a>
   </section>
 
-  <!-- ── ABOUT ── -->
-  <section class="wrap" id="about">
-    <div class="about-grid">
+  <!-- STATS STRIP -->
+  <div class="stats-strip">
+    <div class="stat-cell reveal">
+      <div class="stat-pre">Experience</div>
+      <div class="stat-num">2<sup>+</sup></div>
+      <div class="stat-desc">Years in Salesforce development</div>
+    </div>
+    <div class="stat-cell reveal" style="transition-delay:.08s">
+      <div class="stat-pre">Projects</div>
+      <div class="stat-num">10<sup>+</sup></div>
+      <div class="stat-desc">Successful implementations</div>
+    </div>
+    <div class="stat-cell reveal" style="transition-delay:.16s">
+      <div class="stat-pre">Certifications</div>
+      <div class="stat-num">2</div>
+      <div class="stat-desc">Salesforce certified credentials</div>
+    </div>
+    <div class="stat-cell reveal" style="transition-delay:.24s">
+      <div class="stat-pre">Get in touch</div>
+      <div class="stat-num" style="font-size:1.1rem; padding-top:8px;">
+        <a href="#contact" class="more-link" style="font-size:1rem;">
+          Contact me →
+        </a>
+      </div>
+      <div class="stat-desc">Open to new opportunities</div>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <section class="about" id="about">
+    <div class="about-left">
       <div class="reveal-left">
-        <p class="sec-label">About Me</p>
-        <h2 class="sec-heading">Building <em>scalable</em><br>Salesforce solutions</h2>
+        <div class="section-eyebrow">About Me</div>
+        <h2 class="about-heading">Building Salesforce<br>solutions <em>since 2022</em></h2>
         <p class="about-body">
-          A passionate Salesforce Developer focused on building scalable, automated, and secure
-          Salesforce solutions using Apex, LWC, Flows, and Triggers. I bridge business logic
-          and clean engineering to create reliable CRM experiences.
+          I'm a Salesforce Developer passionate about clean automation, secure data architecture,
+          and crafting intuitive Lightning experiences. From Apex triggers to Agentforce AI agents —
+          I bring both technical depth and a developer's eye for detail to every project.
         </p>
-        <div class="about-stats">
-          <div class="stat">
-            <div class="stat-n">2<span>+</span></div>
-            <div class="stat-l">Years Experience</div>
-          </div>
-          <div class="stat">
-            <div class="stat-n">10<span>+</span></div>
-            <div class="stat-l">Projects Done</div>
-          </div>
-          <div class="stat">
-            <div class="stat-n">2<span></span></div>
-            <div class="stat-l">Certifications</div>
-          </div>
-        </div>
+        <a href="#contact" class="more-link">More about me →</a>
       </div>
+    </div>
 
-      <div class="skills reveal-right">
-        <p class="sec-label">Core Skills</p>
-        <div class="skill-row">
-          <div class="skill-meta"><span class="skill-name">Apex & LWC</span><span class="skill-pct">90%</span></div>
-          <div class="skill-track"><div class="skill-fill" data-w="90%"></div></div>
-        </div>
-        <div class="skill-row">
-          <div class="skill-meta"><span class="skill-name">Salesforce Flows & Automation</span><span class="skill-pct">88%</span></div>
-          <div class="skill-track"><div class="skill-fill" data-w="88%"></div></div>
-        </div>
-        <div class="skill-row">
-          <div class="skill-meta"><span class="skill-name">Platform Administration</span><span class="skill-pct">85%</span></div>
-          <div class="skill-track"><div class="skill-fill" data-w="85%"></div></div>
-        </div>
-        <div class="skill-row">
-          <div class="skill-meta"><span class="skill-name">Agentforce / AI Automation</span><span class="skill-pct">78%</span></div>
-          <div class="skill-track"><div class="skill-fill" data-w="78%"></div></div>
-        </div>
-        <div class="skill-row">
-          <div class="skill-meta"><span class="skill-name">SOQL / Data Management</span><span class="skill-pct">82%</span></div>
-          <div class="skill-track"><div class="skill-fill" data-w="82%"></div></div>
+    <div class="about-right">
+      <div class="reveal-right">
+        <div class="section-eyebrow">Core Skills</div>
+        <div class="skills-list">
+          <div class="skill-item">
+            <div class="skill-top"><span class="skill-name">Apex & Lightning Web Components</span><span class="skill-pct">90%</span></div>
+            <div class="skill-track"><div class="skill-fill" data-w="90%"></div></div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-top"><span class="skill-name">Salesforce Flows & Automation</span><span class="skill-pct">88%</span></div>
+            <div class="skill-track"><div class="skill-fill" data-w="88%"></div></div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-top"><span class="skill-name">Platform Administration</span><span class="skill-pct">85%</span></div>
+            <div class="skill-track"><div class="skill-fill" data-w="85%"></div></div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-top"><span class="skill-name">Agentforce / AI Automation</span><span class="skill-pct">78%</span></div>
+            <div class="skill-track"><div class="skill-fill" data-w="78%"></div></div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-top"><span class="skill-name">SOQL & Data Management</span><span class="skill-pct">82%</span></div>
+            <div class="skill-track"><div class="skill-fill" data-w="82%"></div></div>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ── CERTIFICATIONS ── -->
-  <section class="wrap" id="certifications">
-    <div class="certs-header reveal">
-      <p class="sec-label">Credentials</p>
-      <h2 class="sec-heading">Salesforce <em>Certifications</em></h2>
+  <!-- CERTIFICATIONS -->
+  <section class="certs-section" id="certifications">
+    <div class="certs-top reveal">
+      <div>
+        <div class="section-eyebrow">Credentials</div>
+        <h2 class="certs-heading">Salesforce <em>Certifications</em></h2>
+      </div>
+      <div class="cert-count">2 certifications earned</div>
     </div>
 
     <div class="certs-grid">
       <div class="cert-card reveal">
-        <div class="cert-img">
+        <div class="cert-img-wrap">
           <img src="Admin.jpg" alt="Admin">
         </div>
-        <div class="cert-body">
-          <h3>Salesforce Platform Administrator</h3>
-          <p>Strong foundation in Salesforce configuration, security, and automation.</p>
-          <span class="cert-tag">✦ Certified</span>
+        <div class="cert-info">
+          <div class="cert-num">Cert 01</div>
+          <div class="cert-title">Salesforce Platform Administrator</div>
+          <div class="cert-desc">Strong foundation in Salesforce configuration, security, user management, and automation tools.</div>
+          <div class="cert-badge">Certified</div>
         </div>
       </div>
 
-      <div class="cert-card reveal" style="transition-delay:.12s">
-        <div class="cert-img">
-          <img src="Agentforce.jpg" alt="Agentforce">
+      <div class="cert-card reveal" style="transition-delay:.1s">
+        <div class="cert-img-wrap">
+        <img src="Agentforce.jpg" alt="Agentforce">
         </div>
-        <div class="cert-body">
-          <h3>Salesforce Agentforce Specialist</h3>
-          <p>Expertise in AI-driven automation and intelligent agent solutions.</p>
-          <span class="cert-tag">✦ Certified</span>
+        <div class="cert-info">
+          <div class="cert-num">Cert 02</div>
+          <div class="cert-title">Salesforce Agentforce Specialist</div>
+          <div class="cert-desc">Expertise in AI-driven automation, intelligent agent configuration, and Agentforce platform solutions.</div>
+          <div class="cert-badge">Certified</div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ── CONTACT ── -->
-  <section class="wrap" id="contact">
-    <div class="contact-wrap">
-      <div class="reveal">
-        <p class="sec-label">Get In Touch</p>
-        <h2 class="sec-heading">Let's work<br><em>together</em></h2>
+  <!-- CONTACT -->
+  <section class="contact-section" id="contact">
+    <div class="contact-left">
+      <div class="reveal-left">
+        <div class="section-eyebrow">Get In Touch</div>
+        <h2 class="contact-heading">Let's build<br>something <em>great</em><br>together</h2>
         <p class="contact-body">
-          Open to Salesforce developer roles, freelance projects, and collaborations.
-          Whether you have a question or just want to say hi — I'll get back to you.
+          Open to full-time Salesforce developer roles, freelance projects, and collaborations.
+          Whether you have a question or a project idea, I'll get back to you quickly.
         </p>
-        <div class="contact-links">
-          <a href="mailto:bharanitharan@email.com" class="c-link">
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            Send Email
-          </a>
-          <a href="#" class="c-link">
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="4"/><path d="M7 10v7M7 7v.01M12 10v7m0-5a3 3 0 016 0v5"/></svg>
-            LinkedIn
-          </a>
-          <a href="#" class="c-link">
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".5" fill="currentColor"/></svg>
-            Instagram
-          </a>
+        <a href="mailto:bharanitharan@email.com" class="contact-btn">
+          Send a message
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="contact-right">
+      <div class="contact-details reveal-right">
+        <div class="contact-detail-row">
+          <div class="cd-label">Email</div>
+          <div class="cd-value"><a href="mailto:bharanitharan@email.com">bharanitharan@email.com</a></div>
+        </div>
+        <div class="contact-detail-row">
+          <div class="cd-label">LinkedIn</div>
+          <div class="cd-value"><a href="#">linkedin.com/in/bharanitharan</a></div>
+        </div>
+        <div class="contact-detail-row">
+          <div class="cd-label">Location</div>
+          <div class="cd-value">Chennai, Tamil Nadu, India</div>
+        </div>
+        <div class="contact-detail-row">
+          <div class="cd-label">Availability</div>
+          <div class="cd-value" style="color: #4ade80;">Open to opportunities</div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ── FOOTER ── -->
+  <!-- FOOTER -->
   <footer>
-    <p>© 2026 <span>Bharanitharan</span> · Salesforce Developer</p>
+    <a href="#home" class="footer-brand">
+      <span style="color:var(--blue); font-weight:800;">&lt;/&gt;</span>
+      Bharanitharan
+    </a>
+    <span class="footer-copy">© 2026 · Salesforce Developer · Chennai</span>
     <div class="footer-links">
-      <a href="#">LinkedIn</a>
-      <a href="#">Instagram</a>
-      <a href="#">Trailhead</a>
+      <a href="#about">About</a>
+      <a href="#certifications">Certifications</a>
+      <a href="#contact">Contact</a>
     </div>
   </footer>
 
   <script>
-    /* Scroll reveal */
-    const els = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+    // Scroll reveal
+    const allReveal = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
     const io = new IntersectionObserver(entries => {
       entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('show'); io.unobserve(e.target); } });
-    }, { threshold: 0.12 });
-    els.forEach(el => io.observe(el));
+    }, { threshold: 0.1 });
+    allReveal.forEach(el => io.observe(el));
 
-    /* Skill bars */
+    // Skill bars
     const fills = document.querySelectorAll('.skill-fill');
-    const bio = new IntersectionObserver(entries => {
-      entries.forEach(e => { if (e.isIntersecting) { e.target.style.width = e.target.dataset.w; bio.unobserve(e.target); } });
-    }, { threshold: 0.5 });
-    fills.forEach(f => bio.observe(f));
+    const sio = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.style.width = e.target.dataset.w; sio.unobserve(e.target); } });
+    }, { threshold: 0.4 });
+    fills.forEach(f => sio.observe(f));
 
-    /* Nav active state */
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const target = document.querySelector(a.getAttribute('href'));
+        if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
+      });
+    });
+
+    // Nav active highlight
     const sections = document.querySelectorAll('section[id]');
-    const links = document.querySelectorAll('.nav-links a');
+    const navAs = document.querySelectorAll('.nav-links a');
     window.addEventListener('scroll', () => {
       let cur = '';
-      sections.forEach(s => { if (scrollY >= s.offsetTop - 130) cur = s.id; });
-      links.forEach(a => { a.style.color = a.getAttribute('href') === '#' + cur ? 'var(--white)' : ''; });
+      sections.forEach(s => { if (scrollY >= s.offsetTop - 120) cur = s.id; });
+      navAs.forEach(a => {
+        const active = a.getAttribute('href') === '#' + cur;
+        a.style.color = active ? 'var(--white)' : '';
+        a.style.background = active ? 'rgba(255,255,255,.05)' : '';
+      });
     });
   </script>
 </body>
